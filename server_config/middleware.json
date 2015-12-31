@@ -1,0 +1,52 @@
+{
+    "morgan": {
+        "enabled": true,
+        "priority": 5,
+        "module": {
+            "name": "morgan",
+            "arguments": [
+                "combined"
+            ]
+        }
+    },
+    "bodyParserJSON": {
+        "enabled": true,
+        "priority": 10,
+        "module": {
+            "name": "body-parser",
+            "method": "json",
+            "arguments": [
+                {
+                    "limit": "50mb"
+                }
+            ]
+        }
+    },
+    "bodyParserUrlEncoding": {
+        "enabled": true,
+        "priority": 20,
+        "module": {
+            "name": "body-parser",
+            "method": "urlencoded",
+            "arguments": [
+                {
+                    "extended": true,
+                    "limit": "50mb"
+                }
+            ]
+        }
+    },
+    "enrouten": {
+        "enabled": true,
+        "priority": 50,
+        "module": {
+            "name": "express-enrouten",
+            "arguments": [
+                {
+                    "index": "path:../server/app/express/routes/index",
+                    "routes": "config:routes"
+                }
+            ]
+        }
+    }
+}

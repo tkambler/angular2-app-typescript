@@ -1,0 +1,5 @@
+{
+    "port": 9020,
+    "routes": "import:./routes",
+    "middleware": "import:./middleware"
+}
