@@ -4,7 +4,7 @@
   "description": "Example Angular 2 application written in TypeScript",
   "main": "index.js",
   "scripts": {
-    "start": "export NODE_PATH=$NODE_PATH:./server && grunt nodemon"
+    "start": "export NODE_PATH=$NODE_PATH:./server && grunt"
   },
   "author": "Tim Ambler <tkambler@gmail.com>",
   "license": "ISC",
@@ -26,6 +26,7 @@
     "load-grunt-tasks": "^3.4.0",
     "meddleware": "^3.0.3",
     "morgan": "^1.6.1",
+    "open": "0.0.5",
     "reflect-metadata": "^0.1.2",
     "rxjs": "^5.0.0-beta.0",
     "shortstop-handlers": "^1.0.0",
