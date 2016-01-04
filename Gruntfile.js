@@ -2,6 +2,8 @@
 
 module.exports = (grunt) => {
 
+    require('time-grunt')(grunt);
+
     require('load-grunt-tasks')(grunt, {
         'pattern': [
             'grunt-*'
@@ -9,6 +11,12 @@ module.exports = (grunt) => {
     });
 
     grunt.config.init({
+        'concurrent': {
+            'options': {
+                'logConcurrentOutput': true
+            },
+            'develop': ['nodemon', 'watch'],
+        },
         'nodemon': {
             'server': {
                 'script': 'bin/server.js',
@@ -18,21 +26,33 @@ module.exports = (grunt) => {
                     'callback': (nodemon) => {
 
                         nodemon.on('config:update', () => {
-                            var config = require('app/config');
-                            setTimeout(() => {
-                                require('open')('http://localhost:' + config.get('port'));
-                            }, 1000);
+                            var path = require('path');
+                            require('app/config')(path.join(__dirname, 'server_config'))
+                                .then((config) => {
+                                    setTimeout(() => {
+                                        require('open')('http://localhost:' + config.get('port'));
+                                    }, 1000);
+                                });
                         });
 
                     }
                 }
             }
         },
-        'copy': {
+        'clean': {
+            'options': {
+                'no-write': false
+            },
+            'default': {
+                'src': ['client_compiled']
+            }
+        },
+        'sync': {
             'default': {
                 'files': [
                     {
-                        'src': 'client/**/*',
+                        'cwd': 'client',
+                        'src': '**/*',
                         'dest': 'client_compiled',
                         'expand': true
                     }
@@ -41,15 +61,24 @@ module.exports = (grunt) => {
         },
         'ts': {
             'default': {
-                'src': ['client/app/**/*.ts'],
-                'tsconfig': 'tsconfig.json'
+                'src': ['client_compiled/app/**/*.ts'],
+                'options': {
+                    'target': 'ES5',
+                    'module': 'commonjs',
+                    'moduleResolution': 'node',
+                    'sourceMap': true,
+                    'emitDecoratorMetadata': true,
+                    'experimentalDecorators': true,
+                    'removeComments': false,
+                    'noImplicitAny': false
+                }
             }
         },
         'browserify': {
             'options': {
                 'exclude': [],
                 'require': [],
-                'paths': ['src'],
+                'paths': ['client_compiled/client'],
                 'babelify': {
                     'enable': true,
                     'options': {
@@ -59,25 +88,21 @@ module.exports = (grunt) => {
             },
             'default': {
                 'options': {
-                    'src': 'client/app/boot.js',
-                    'dest': 'client/app/compiled.js'
+                    'src': 'client_compiled/app/boot.js',
+                    'dest': 'client_compiled/app/compiled.js'
                 }
+            }
+        },
+        'watch': {
+            'default': {
+                'files': ['client/**/*'],
+                'tasks': ['sync', 'ts', 'browserify']
             }
         }
     });
 
-    grunt.registerTask('load-config', function() {
-        var done = this.async();
-        var path = require('path');
-        require('app/config')(path.join(__dirname, 'server_config'))
-            .then(() => {
-                return done();
-            });
-    });
-
-    grunt.registerTask('default', ['nodemon']);
-    grunt.registerTask('build', []);
-    grunt.registerTask('launch', ['load-config', 'nodemon']);
+    grunt.registerTask('build', ['clean', 'sync', 'ts', 'browserify']);
+    grunt.registerTask('launch', ['build', 'concurrent:develop']);
     grunt.loadTasks('tasks');
 
 };
