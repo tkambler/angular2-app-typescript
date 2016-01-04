@@ -1,5 +1,8 @@
 import {Component} from 'angular2/core';
 import {bootstrap} from 'angular2/platform/browser'
+import {Something} from './something';
+
+console.log('Something', Something);
 
 @Component({
     'selector': 'my-app',
@@ -8,3 +11,6 @@ import {bootstrap} from 'angular2/platform/browser'
 class AppComponent {}
 
 bootstrap(AppComponent);
+
+var something = new Something();
+something.run();

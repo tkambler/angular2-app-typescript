@@ -27,6 +27,42 @@ module.exports = (grunt) => {
                     }
                 }
             }
+        },
+        'copy': {
+            'default': {
+                'files': [
+                    {
+                        'src': 'client/**/*',
+                        'dest': 'client_compiled',
+                        'expand': true
+                    }
+                ]
+            }
+        },
+        'ts': {
+            'default': {
+                'src': ['client/app/**/*.ts'],
+                'tsconfig': 'tsconfig.json'
+            }
+        },
+        'browserify': {
+            'options': {
+                'exclude': [],
+                'require': [],
+                'paths': ['src'],
+                'babelify': {
+                    'enable': true,
+                    'options': {
+                        'presets': ['es2015']
+                    }
+                }
+            },
+            'default': {
+                'options': {
+                    'src': 'client/app/boot.js',
+                    'dest': 'client/app/compiled.js'
+                }
+            }
         }
     });
 
@@ -40,7 +76,8 @@ module.exports = (grunt) => {
     });
 
     grunt.registerTask('default', ['nodemon']);
-
-    grunt.task.run(['load-config']);
+    grunt.registerTask('build', []);
+    grunt.registerTask('launch', ['load-config', 'nodemon']);
+    grunt.loadTasks('tasks');
 
 };
